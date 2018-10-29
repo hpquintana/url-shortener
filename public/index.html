@@ -12,6 +12,7 @@
     <script defer src="/__/firebase/5.5.6/firebase-database.js"></script>
     <script defer src="/__/firebase/5.5.6/firebase-messaging.js"></script>
     <script defer src="/__/firebase/5.5.6/firebase-storage.js"></script>
+    <script defer src="/__/firebase/5.5.6/firebase-functions.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="/__/firebase/init.js"></script>
 
@@ -55,6 +56,30 @@
           let app = firebase.app();
           let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
           document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+          
+          // var config = {
+          //   apiKey: "AIzaSyAl202IMUCiqL-jYi6N0nJsA-nEDVadfiM",
+          //   authDomain: "url-shortner-3a035.firebaseapp.com",
+          //   databaseURL: "https://url-shortner-3a035.firebaseio.com",
+          //   projectId: "url-shortner-3a035",
+          //   storageBucket: "url-shortner-3a035.appspot.com",
+          //   messagingSenderId: "824037888577"
+          // };
+          // firebase.initializeApp(config);
+
+          let urlId = window.location.href;
+          var addMessage = firebase.functions().httpsCallable('getUrl');
+          addMessage({urlId: urlId}).then(function(result) {
+            
+            var url = result.data.url;
+            console.log(url);
+          }).catch(function(error) {
+            // Getting the Error details.
+            var code = error.code;
+            var message = error.message;
+            var details = error.details;
+            // ...
+          });
         } catch (e) {
           console.error(e);
           document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
