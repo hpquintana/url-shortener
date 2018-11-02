@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Url Shortener</title>
+    <link rel="stylesheet" href="css/shortenStyle.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/5.5.6/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/5.5.6/firebase-auth.js"></script>
+    <script defer src="/__/firebase/5.5.6/firebase-database.js"></script>
+    <script defer src="/__/firebase/5.5.6/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/5.5.6/firebase-storage.js"></script>
+    <script defer src="/__/firebase/5.5.6/firebase-functions.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+</head>
+
+<body>
+    <!--    BEGIN HEADER-->
+    <div class="mobile-header primary-color-bg mobile-only"> <img alt="Menu Icon" class="mobile-nav" src="img/mobile_nav.png">
+    </div>
+    <div class="nav primary-color-bg desktop-only" id='side_panel'>
+        <img class="mobile-close-button mobile-only" src="img/mobile_close.png" id="close_button" alt="Close button" />
+        <div class="mobile-logo-container center">
+            <img class="nav-logo" src="img/boltbulls.jpg">
+        </div>
+
+        <ul class="nav-ul">
+            <li class="nav-li mobile-active"><a class="nav-a mobile-a-active" href="#about-start">about</a></li>
+            <li class="nav-li"><a class="nav-a mobile-a" href="#about-start">about</a></li>
+            <li class="nav-li"><a class="nav-a mobile-a" href="http://betabulls.com/pages/blog" target="_blank">Blog</a></li>
+        </ul>
+    </div>
+    <!--    END HEADER-->
+    <div class="url-div-container-half center primary-color-bg">
+        <div class="url-container-half">
+            <h1 class="accent-color-text main-h1-text">A new way <br />to shorten urls</h1>
+            <div class="accent-color-bg accent-div"></div>
+            <h2 class="url-h2">Shorten urls using Google Firebase</h2>
+            <p class="url-p">Just because we can!</p>
+        </div>
+    </div>
+    <div class="url-input-container-half center">
+        <div class="url-input-div url-input-div-half">
+            <input type="text" class="url-input" placeholder="Enter a URL" id='shorten-url-input' oninput="shortenOnInputChange()">
+            <input type="submit" class="analyze-button accent-color-bg" value="Shorten" onclick="shortenOnClickHandler()">
+        </div>
+    </div>
+
+    <div class="error-div center">
+        <p class="hidden" id='error-text'></p>
+    </div>
+
+    <div class="hidden" id='url-shorten-results'>
+        <div class="results-main">
+            <div class="results-side-text">
+                <h1 class="results-h1 center">Your shortened url is ready!</h1>
+                <h3 class="center" id="original-url" style="margin: .5em auto;"></h3>
+                <div class="results-url-input-div">
+                    <input type="search" class="results-url-input" id="results-input" placeholder="http://hpquintana.github.io" readonly>
+                </div>
+                <div class="results-score center">
+                    <div class="results-score-num vertical-border">
+                        <p class="results-p results-large-text" id="created-date"></p>
+                        <p class="results-p">First Created</p>
+                    </div>
+                    <div class="results-score-num">
+                            <p class="results-p results-large-text" id="used-date"></p>
+                        <p class="results-p">Last Used</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="results-score results-bot center">
+            <div class="results-score-num-2 l-results">
+                <p class="results-p"><span id="overall">98</span>/100</p>
+                <p class="results-p">OVERALL SCORE</p>
+            </div>
+            <div class="results-score-num-2">
+                <p class="results-p"><span id="load-time">4.2</span>sec</p>
+                <p class="results-p">LOAD TIME</p>
+            </div>
+            <div class="results-score-num-2 r-results">
+                <p class="results-p"><span id="overall">98</span>/100</p>
+                <p class="results-p">OVERALL SCORE</p>
+            </div>
+        </div> -->
+    </div>
+
+
+    <div class="sbs-container" id="about-start">
+        <div class="sbs-flex">
+            <div class="sbs-right-img mobile-only">
+                <img class="sbs-img" src="img/screenshot.png">
+            </div>
+            <div class="sbs-left center">
+                <h2 class="sbs-h2">SEO Analysis</h2>
+                <p class="sbs-p">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed dolor a nulla
+                    tempus efficitur. Etiam dapibus scelerisque sem ultrices posuere. Maecenas commodo pretium felis,
+                    id viverra eros aliquam eget. Proin semper sem ipsum, sed faucibus massa efficitur non. Vestibulum
+                    dignissim ullamcorper libero, gravida cursus massa faucibus ut. Suspendisse suscipit tortor quis
+                    felis vulputate, et faucibus ligula auctor. Nulla facilisi. Ut sed nulla libero. Etiam eu ligula
+                    sodales, maximus sapien vel, fermentum felis.</p>
+            </div>
+            <div class="sbs-right-img desktop-only">
+                <img class="sbs-img" src="img/screenshot.png">
+            </div>
+        </div>
+    </div>
+    <div class="sbs-container">
+        <div class="sbs-flex">
+            <div class="sbs-left-img">
+                <img class="sbs-img" src="img/screenshot.png">
+            </div>
+            <div class="sbs-right">
+                <h2 class="sbs-h2">Content Marketing</h2>
+                <p class="sbs-p">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed dolor a nulla
+                    tempus efficitur. Etiam dapibus scelerisque sem ultrices posuere. Maecenas commodo pretium felis,
+                    id viverra eros aliquam eget. Proin semper sem ipsum, sed faucibus massa efficitur non. Vestibulum
+                    dignissim ullamcorper libero, gravida cursus massa faucibus ut. Suspendisse suscipit tortor quis
+                    felis vulputate, et faucibus ligula auctor. Nulla facilisi. Ut sed nulla libero. Etiam eu ligula
+                    sodales, maximus sapien vel, fermentum felis.</p>
+            </div>
+        </div>
+    </div>
+    <div class="sbs-container">
+        <div class="sbs-flex">
+            <div class="sbs-right-img mobile-only">
+                <img class="sbs-img" src="img/screenshot.png">
+            </div>
+            <div class="sbs-left center">
+                <h2 class="sbs-h2">Optimized for Speed</h2>
+                <p class="sbs-p">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed dolor a nulla
+                    tempus efficitur. Etiam dapibus scelerisque sem ultrices posuere. Maecenas commodo pretium felis,
+                    id viverra eros aliquam eget. Proin semper sem ipsum, sed faucibus massa efficitur non. Vestibulum
+                    dignissim ullamcorper libero, gravida cursus massa faucibus ut. Suspendisse suscipit tortor quis
+                    felis vulputate, et faucibus ligula auctor. Nulla facilisi. Ut sed nulla libero. Etiam eu ligula
+                    sodales, maximus sapien vel, fermentum felis.</p>
+            </div>
+            <div class="sbs-right-img desktop-only">
+                <img class="sbs-img" src="img/screenshot.png">
+            </div>
+        </div>
+    </div>
+
+    <!--    BEGIN FOOTER-->
+    <div class="primary-color-border"></div>
+    <!-- <div class="center">
+        <div class="bot-icons">
+            <a href="https://twitter.com/" target="_blank" class="bot-icon accent-color-bg center"><img class="bot-icon-img"
+                    src="img/tweet.png"></a>
+            <a href="https://twitter.com/" target="_blank" class="bot-icon accent-color-bg center"><img class="bot-icon-img"
+                    src="img/tweet.png"></a>
+            <a href="https://twitter.com/" target="_blank" class="bot-icon accent-color-bg center"><img class="bot-icon-img"
+                    src="img/tweet.png"></a>
+            <a href="https://twitter.com/" target="_blank" class="bot-icon accent-color-bg center"><img class="bot-icon-img"
+                    src="img/tweet.png"></a>
+        </div>
+    </div> -->
+    
+    <div class="footer center">
+        <p>Made With ☕ by <a class="bb-a" href="http://hpquintana.github.io/">Hector Quintana</a></p>
+    </div>
+    <!--    END FOOTER-->
+    <script src="js/urlShorten.js"></script>>
+    <script src="js/smoothscroll.js"></script>
+    <script src="js/mobile-nav.js"></script>
+</body>
+
+</html>

@@ -14,14 +14,16 @@
   },
   "hosting": {
     "public": "public",
-    "cleanUrls": true,
-    "trailingSlash": false,
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      },
       {
         "source": "/api/v1/**",
         "function": "webApi"
