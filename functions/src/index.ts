@@ -1,18 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import * as express from 'express';
-import * as bodyParser from "body-parser";
 import * as validUrl from "valid-url";
 import * as shortId from "shortid";
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.database().ref();
-const app = express();
-const main = express();
-
-main.use('/api/v1', app);
-main.use(bodyParser.json());
-main.use(bodyParser.urlencoded({ extended: false }));
 
 exports.shortenUrl = functions.https.onCall((data, context) => {
     const originalUrl = data.originalUrl || null;
@@ -61,45 +53,36 @@ exports.shortenUrl = functions.https.onCall((data, context) => {
     }
 });
 
-export const webApi = functions.https.onRequest(main);
+exports.redirect = functions.https.onRequest((request, response) => {
+    const originalUrl = request.originalUrl;
+    let splitUrl = originalUrl.split('/');
+    const urlId = splitUrl.pop();
 
-app.post('/generate', (req, res) => {
-    const { shortBaseUrl, originalUrl } = req.body;
-
-    if (!validUrl.isUri(shortBaseUrl)) {
-        return res.status(404).json("Invalid Base Url format");
+    if(!urlId){
+        response.redirect('/url');
     } else {
-        const urlCode = shortId.generate();
-
-        if (validUrl.isUri(originalUrl)) {
-
-            return db.child(`shortUrls/${shortBaseUrl}/${urlCode}`).once('value')
-                .then(readResult => {
-                    if (readResult.val() !== null) {
-                        return res.status(200).json(readResult.val());
-                    } else {
-                        const updatedAt = new Date().getTime();
-                        const shortUrl = shortBaseUrl + "/" + urlCode;
-                        return db.child(`shortUrls/${shortBaseUrl}/${urlCode}`).set({
-                            originalUrl: originalUrl,
-                            shortUrl: shortUrl,
-                            urlCode: urlCode,
-                            updatedAt: updatedAt
-                        }).then(() => {
-                            return res.status(200).json({
-                                originalUrl: originalUrl,
-                                shortUrl: shortUrl,
-                                urlCode: urlCode,
-                                updatedAt: updatedAt
-                            });
-                        });
-                    }
-                }).catch(err => {
-                    console.log(err);
-                    return res.status(401).json("Unexpected Error");
-                });
-        } else {
-            return res.status(401).json("Invalid Original Url.");
-        }
+        db.child(`shortUrls/${urlId}`).once('value').then(urlSnap => {
+            if(urlSnap.val() !== null ){
+                const redirectUrl = urlSnap.child('originalUrl').val() || null;
+                
+                if(redirectUrl){
+                    const currentDate = new Date().getTime();
+                    db.child(`shortUrls/${urlId}/lastUsed`).set(currentDate).then( ()=> {
+                        response.redirect(redirectUrl);
+                    }).catch(err => {
+                        console.log(err);
+                        response.redirect(redirectUrl);
+                    });
+                } else {
+                    response.redirect('/url');
+                }
+                
+            } else {
+                response.redirect('/url');
+            }
+        }).catch(err => {
+            console.log(err);
+            response.redirect('/url');
+        });
     }
 });

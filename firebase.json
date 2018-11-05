@@ -23,8 +23,8 @@
     ],
     "rewrites": [
       {
-        "source": "/api/v1/**",
-        "function": "webApi"
+        "source": "/r/**",
+        "function": "redirect"
       }
     ]
   }
