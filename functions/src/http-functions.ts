@@ -1,11 +1,13 @@
 import * as shortId from "shortid";
 import * as validUrl from "valid-url";
 
-import { db } from "./db";
-import { https } from "./functions";
-// import * as functions from 'firebase-functions';
+// import initialized db
+import { db } from './db';
+// you can now import everything from index. 
+import { https } from './index';  
+// or (both work)
+// import { https } from 'firebase-functions';
 
-// exports.shortenUrl = functions.https.onCall((data, context) => {
 export const shortenUrl = https.onCall((data, context) => {
     const originalUrl = data.originalUrl || null;
 

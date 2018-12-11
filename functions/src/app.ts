@@ -1,11 +1,10 @@
-// import * as functions from 'firebase-functions';
 import * as express from "express";
 import * as cors from "cors";
 
-import { https } from "./functions";
+import { https } from './index';  
 
 /* Express with CORS & automatic trailing '/' solution */
-const apiApp = express()
+export const apiApp = express()
 apiApp.use(cors({ origin: true }))
 apiApp.get("*", (_request, response) => {
   response.send(
@@ -20,4 +19,3 @@ export const api = https.onRequest((request, response) => {
   }
   return apiApp(request, response)
 });
-
